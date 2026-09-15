@@ -67,6 +67,8 @@ def absolute_url(url):
     if not url:
         return ""
 
+    url = url.strip()
+
     if url.startswith("//"):
         return "https:" + url
 
@@ -80,12 +82,12 @@ def parse_episode(text):
     """
     Primer:
 
-    Epizoda 19, Sezone 2
+        Epizoda 19, Sezone 2
 
     vraća:
 
-    episode = 19
-    season = 2
+        episode = 19
+        season = 2
     """
 
     if not text:
@@ -144,13 +146,16 @@ def parse_calendar_date(text):
 
         Monday, Sep 21
 
-    Godina se uzima iz trenutne godine.
+    vraća:
+
+        2026-09-21
     """
 
     text = clean_text(text)
 
     match = re.search(
-        r"(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+(\d{1,2})",
+        r"(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)"
+        r"\s+(\d{1,2})",
         text,
         re.IGNORECASE
     )
@@ -159,9 +164,14 @@ def parse_calendar_date(text):
         return None
 
     month_name = match.group(1).title()
-    day = int(match.group(2))
 
-    month = MONTHS.get(month_name)
+    day = int(
+        match.group(2)
+    )
+
+    month = MONTHS.get(
+        month_name
+    )
 
     if not month:
         return None
@@ -183,7 +193,8 @@ def get_image_url(img):
     """
     Uzima poster iz src atributa.
 
-    Ako je lazy-load slika, proverava i:
+    Ako je lazy-load slika,
+    proverava i:
 
     data-src
     data-lazy-src
@@ -202,11 +213,13 @@ def get_image_url(img):
 
     for attribute in attributes:
 
-        value = img.get(attribute)
+        value = img.get(
+            attribute
+        )
 
         if value:
             return absolute_url(
-                value.strip()
+                value
             )
 
     return ""
@@ -227,6 +240,10 @@ def main():
     print(
         f"[INFO] Preuzimam:\n{SOURCE_URL}"
     )
+
+    # =====================================================
+    # PREUZIMANJE
+    # =====================================================
 
     try:
 
@@ -292,7 +309,14 @@ def main():
     # OBRADA DANA
     # =====================================================
 
-    for day_block in day_blocks:
+    for day_index, day_block in enumerate(
+        day_blocks,
+        start=1
+    ):
+
+        # -------------------------------------------------
+        # DATUM
+        # -------------------------------------------------
 
         day_header = day_block.select_one(
             ".calendar-primary h2"
@@ -302,11 +326,16 @@ def main():
             continue
 
 
-        date_key = parse_calendar_date(
+        header_text = clean_text(
             day_header.get_text(
                 " ",
                 strip=True
             )
+        )
+
+
+        date_key = parse_calendar_date(
+            header_text
         )
 
 
@@ -317,14 +346,15 @@ def main():
             )
 
             print(
-                day_header.get_text(
-                    " ",
-                    strip=True
-                )
+                header_text
             )
 
             continue
 
+
+        # -------------------------------------------------
+        # KREIRAJ DATUM
+        # -------------------------------------------------
 
         if date_key not in calendar:
 
@@ -342,6 +372,10 @@ def main():
 
         for item in items:
 
+            # ---------------------------------------------
+            # LINK
+            # ---------------------------------------------
+
             link = item.select_one(
                 "a"
             )
@@ -358,7 +392,10 @@ def main():
             # ---------------------------------------------
 
             url = absolute_url(
-                link.get("href", "")
+                link.get(
+                    "href",
+                    ""
+                )
             )
 
 
@@ -491,11 +528,14 @@ def main():
                 )
 
 
-            # ---------------------------------------------
+            # =================================================
             # REZULTAT
-            # ---------------------------------------------
+            # =================================================
 
             episode_data = {
+
+                # DATUM OVE KONKRETNE EPIZODE
+                "date": date_key,
 
                 "title": title,
 
@@ -513,6 +553,10 @@ def main():
 
             }
 
+
+            # -------------------------------------------------
+            # DODAJ U ODGOVARAJUĆI DATUM
+            # -------------------------------------------------
 
             calendar[date_key].append(
                 episode_data
@@ -536,15 +580,24 @@ def main():
         items = calendar[date_key]
 
 
-        # prvo vreme
-        # pa sezona
-        # pa epizoda
+        # Prvo vreme
+        # zatim sezona
+        # zatim epizoda
 
         items.sort(
             key=lambda item: (
-                item.get("time", ""),
-                item.get("season") or 0,
-                item.get("episode") or 0
+                item.get(
+                    "time",
+                    ""
+                ),
+
+                item.get(
+                    "season"
+                ) or 0,
+
+                item.get(
+                    "episode"
+                ) or 0
             )
         )
 
@@ -559,8 +612,11 @@ def main():
     # =====================================================
 
     serbia_tz = timezone(
-        timedelta(hours=2)
+        timedelta(
+            hours=2
+        )
     )
+
 
     updated_at = datetime.now(
         serbia_tz
@@ -613,15 +669,35 @@ def main():
     )
 
 
-    total_series_links = 0
+    total_calendar_items = 0
 
 
     for items in sorted_calendar.values():
 
-        total_series_links += len(
+        total_calendar_items += len(
             items
         )
 
+
+    # =====================================================
+    # PROVERA DATUMA
+    # =====================================================
+
+    date_check_errors = 0
+
+
+    for date_key, items in sorted_calendar.items():
+
+        for item in items:
+
+            if item.get("date") != date_key:
+
+                date_check_errors += 1
+
+
+    # =====================================================
+    # ISPIS
+    # =====================================================
 
     print()
     print("=" * 60)
@@ -633,7 +709,7 @@ def main():
     )
 
     print(
-        f"[OK] Epizoda: {total_series_links}"
+        f"[OK] Epizoda: {total_calendar_items}"
     )
 
     print(
@@ -641,16 +717,27 @@ def main():
     )
 
     print(
-        f"[OK] JSON: {output_path.resolve()}"
+        f"[OK] Provera datuma: "
+        f"{date_check_errors} grešaka"
     )
 
     print(
-        f"[OK] Ažurirano: {updated_at}"
+        f"[OK] JSON: "
+        f"{output_path.resolve()}"
+    )
+
+    print(
+        f"[OK] Ažurirano: "
+        f"{updated_at}"
     )
 
     print()
     print("=" * 60)
 
+
+# =========================================================
+# START
+# =========================================================
 
 if __name__ == "__main__":
 
