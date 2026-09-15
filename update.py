@@ -242,7 +242,7 @@ def main():
 
         print()
         print(
-            f"[ERROR] Ne mogu da otvorim stranicu:"
+            "[ERROR] Ne mogu da otvorim stranicu:"
         )
 
         print(error)
@@ -311,6 +311,7 @@ def main():
 
 
         if not date_key:
+
             print(
                 "[WARN] Ne mogu da pročitam datum:"
             )
@@ -346,7 +347,9 @@ def main():
             )
 
             if not link:
+
                 skipped_items += 1
+
                 continue
 
 
@@ -441,6 +444,7 @@ def main():
             )
 
             timezone_text = ""
+
 
             if timezone_match:
 
@@ -585,8 +589,9 @@ def main():
     # SNIMANJE
     # =====================================================
 
-    output_path =
-        Path(OUTPUT_FILE)
+    output_path = Path(
+        OUTPUT_FILE
+    )
 
 
     output_path.write_text(
