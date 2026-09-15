@@ -1,0 +1,1560 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>TV Kalendar – Sve na Ekranu</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+    background: #080808;
+    color: #ffffff;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+    overflow-x: hidden;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.header {
+    padding: 28px 40px 20px;
+    text-align: center;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 34px;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.header h1 span {
+    color: #e50914;
+}
+
+.header p {
+    margin: 8px 0 0;
+    color: #999;
+    font-size: 16px;
+}
+
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+.loading {
+    min-height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #aaa;
+    font-size: 18px;
+}
+
+.loading::before {
+    content: "";
+    width: 22px;
+    height: 22px;
+    border: 3px solid #333;
+    border-top-color: #e50914;
+    border-radius: 50%;
+    margin-right: 12px;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+
+/* =========================================================
+   ERROR
+========================================================= */
+
+.error {
+    max-width: 700px;
+    margin: 50px auto;
+    padding: 25px;
+    background: #151515;
+    border: 1px solid #333;
+    border-radius: 12px;
+    text-align: center;
+    color: #ff6b6b;
+}
+
+
+/* =========================================================
+   DATE NAVIGATION
+========================================================= */
+
+.days-wrapper {
+    width: 100%;
+    padding: 0 30px 20px;
+}
+
+.days {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding: 5px 5px 12px;
+
+    scrollbar-width: thin;
+    scrollbar-color: #444 transparent;
+}
+
+.days::-webkit-scrollbar {
+    height: 6px;
+}
+
+.days::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.days::-webkit-scrollbar-thumb {
+    background: #444;
+    border-radius: 10px;
+}
+
+.day-button {
+    flex: 0 0 auto;
+
+    min-width: 130px;
+
+    padding: 14px 18px;
+
+    background: #161616;
+    border: 1px solid #292929;
+    border-radius: 10px;
+
+    color: #aaa;
+
+    cursor: pointer;
+
+    text-align: center;
+
+    transition:
+        background 0.2s,
+        border-color 0.2s,
+        transform 0.2s;
+}
+
+.day-button:hover {
+    background: #202020;
+    border-color: #444;
+}
+
+.day-button.active {
+    background: #e50914;
+    border-color: #e50914;
+    color: #fff;
+}
+
+.day-button .day-name {
+    display: block;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.day-button .day-date {
+    display: block;
+    margin-top: 4px;
+    font-size: 17px;
+    font-weight: 800;
+}
+
+
+/* =========================================================
+   MAIN
+========================================================= */
+
+.main {
+    width: 100%;
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 0 35px 50px;
+}
+
+
+/* =========================================================
+   DAY TITLE
+========================================================= */
+
+.day-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin: 10px 0 22px;
+}
+
+.day-title h2 {
+    margin: 0;
+
+    font-size: 25px;
+    font-weight: 800;
+}
+
+.day-title h2 span {
+    color: #e50914;
+}
+
+.day-count {
+    color: #777;
+    font-size: 14px;
+}
+
+
+/* =========================================================
+   SERIES GRID
+========================================================= */
+
+.series-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(auto-fill, minmax(190px, 1fr));
+
+    gap: 22px;
+}
+
+
+/* =========================================================
+   SERIES CARD
+========================================================= */
+
+.series-card {
+    position: relative;
+
+    background: #141414;
+
+    border: 1px solid #252525;
+
+    border-radius: 12px;
+
+    overflow: hidden;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s,
+        border-color 0.2s,
+        box-shadow 0.2s;
+}
+
+.series-card:hover {
+    transform: translateY(-4px);
+
+    border-color: #555;
+
+    box-shadow:
+        0 12px 30px rgba(0, 0, 0, 0.5);
+}
+
+
+/* =========================================================
+   POSTER
+========================================================= */
+
+.poster-wrapper {
+    position: relative;
+
+    width: 100%;
+
+    aspect-ratio: 2 / 3;
+
+    background: #222;
+
+    overflow: hidden;
+}
+
+.poster {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    display: block;
+
+    transition: transform 0.3s;
+}
+
+.series-card:hover .poster {
+    transform: scale(1.03);
+}
+
+
+/* =========================================================
+   NEW BADGE
+========================================================= */
+
+.new-badge {
+    position: absolute;
+
+    top: 10px;
+    left: 10px;
+
+    background: #e50914;
+
+    color: #fff;
+
+    padding: 5px 8px;
+
+    border-radius: 5px;
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    text-transform: uppercase;
+
+    box-shadow:
+        0 3px 10px rgba(0, 0, 0, 0.4);
+}
+
+
+/* =========================================================
+   EPISODE COUNT BADGE
+========================================================= */
+
+.episode-count {
+    position: absolute;
+
+    right: 10px;
+    bottom: 10px;
+
+    background: rgba(0, 0, 0, 0.85);
+
+    color: #fff;
+
+    padding: 6px 9px;
+
+    border-radius: 6px;
+
+    font-size: 12px;
+
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   CARD INFO
+========================================================= */
+
+.card-info {
+    padding: 14px;
+}
+
+.series-title {
+    margin: 0;
+
+    font-size: 16px;
+
+    line-height: 1.3;
+
+    font-weight: 800;
+
+    color: #fff;
+}
+
+.season {
+    margin-top: 8px;
+
+    color: #e50914;
+
+    font-size: 14px;
+
+    font-weight: 800;
+}
+
+
+/* =========================================================
+   EPISODES
+========================================================= */
+
+.episodes {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 6px;
+
+    margin-top: 10px;
+}
+
+.episode {
+    background: #292929;
+
+    color: #ddd;
+
+    border-radius: 5px;
+
+    padding: 5px 8px;
+
+    font-size: 12px;
+
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   TIME
+========================================================= */
+
+.time {
+    display: flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+    margin-top: 12px;
+
+    color: #aaa;
+
+    font-size: 13px;
+}
+
+.time strong {
+    color: #fff;
+}
+
+
+/* =========================================================
+   EMPTY
+========================================================= */
+
+.empty {
+    padding: 70px 20px;
+
+    text-align: center;
+
+    color: #777;
+
+    font-size: 18px;
+}
+
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.footer {
+    padding: 25px 20px 40px;
+
+    text-align: center;
+
+    color: #555;
+
+    font-size: 12px;
+}
+
+.footer strong {
+    color: #777;
+}
+
+
+/* =========================================================
+   TV / FOCUS
+========================================================= */
+
+.day-button:focus,
+.series-card:focus {
+    outline: none;
+
+    border-color: #e50914;
+
+    box-shadow:
+        0 0 0 3px rgba(229, 9, 20, 0.45);
+
+    transform: scale(1.02);
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 900px) {
+
+    .header {
+        padding: 22px 20px 15px;
+    }
+
+    .header h1 {
+        font-size: 28px;
+    }
+
+    .days-wrapper {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+    .main {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+    .series-grid {
+        grid-template-columns:
+            repeat(auto-fill, minmax(150px, 1fr));
+
+        gap: 15px;
+    }
+
+    .card-info {
+        padding: 11px;
+    }
+
+    .series-title {
+        font-size: 14px;
+    }
+}
+
+
+@media (min-width: 1600px) {
+
+    .series-grid {
+        grid-template-columns:
+            repeat(7, 1fr);
+    }
+}
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =======================================================
+     HEADER
+======================================================= -->
+
+<header class="header">
+
+    <h1>
+        📅 TV <span>KALENDAR</span>
+    </h1>
+
+    <p>
+        Sledeće epizode turskih serija
+    </p>
+
+</header>
+
+
+<!-- =======================================================
+     DAYS
+======================================================= -->
+
+<div class="days-wrapper">
+
+    <div
+        id="days"
+        class="days"
+    ></div>
+
+</div>
+
+
+<!-- =======================================================
+     MAIN
+======================================================= -->
+
+<main class="main">
+
+    <div
+        id="content"
+        class="loading"
+    >
+        Učitavanje kalendara...
+    </div>
+
+</main>
+
+
+<!-- =======================================================
+     FOOTER
+======================================================= -->
+
+<footer class="footer">
+
+    <strong>
+        Sve na Ekranu
+    </strong>
+
+    · TV Kalendar
+
+</footer>
+
+
+<script>
+
+/* =========================================================
+   PODEŠAVANJA
+========================================================= */
+
+const CALENDAR_URL = "tv-calendar.json";
+
+
+/* =========================================================
+   ELEMENTI
+========================================================= */
+
+const daysElement =
+    document.getElementById("days");
+
+const contentElement =
+    document.getElementById("content");
+
+
+/* =========================================================
+   GLOBALNI PODACI
+========================================================= */
+
+let calendarData = {};
+
+let availableDates = [];
+
+let selectedDate = null;
+
+
+/* =========================================================
+   DANI U NEDELJI
+========================================================= */
+
+const DAY_NAMES = [
+    "Nedelja",
+    "Ponedeljak",
+    "Utorak",
+    "Sreda",
+    "Četvrtak",
+    "Petak",
+    "Subota"
+];
+
+
+/* =========================================================
+   FORMAT DATUMA
+========================================================= */
+
+function parseDate(dateString) {
+
+    const parts =
+        dateString.split("-");
+
+    return new Date(
+        Number(parts[0]),
+        Number(parts[1]) - 1,
+        Number(parts[2])
+    );
+}
+
+
+function formatDayName(date) {
+
+    return DAY_NAMES[
+        date.getDay()
+    ];
+}
+
+
+function formatDate(date) {
+
+    return (
+        String(date.getDate()).padStart(2, "0")
+        + "."
+        +
+        String(date.getMonth() + 1).padStart(2, "0")
+        + "."
+        +
+        date.getFullYear()
+    );
+}
+
+
+function formatShortDate(date) {
+
+    return (
+        String(date.getDate()).padStart(2, "0")
+        + "."
+        +
+        String(date.getMonth() + 1).padStart(2, "0")
+        + "."
+    );
+}
+
+
+/* =========================================================
+   DANAS / SUTRA
+========================================================= */
+
+function getTodayString() {
+
+    const now = new Date();
+
+    return (
+        now.getFullYear()
+        + "-"
+        +
+        String(now.getMonth() + 1).padStart(2, "0")
+        + "-"
+        +
+        String(now.getDate()).padStart(2, "0")
+    );
+}
+
+
+function getRelativeDayLabel(dateString) {
+
+    const today =
+        new Date();
+
+    today.setHours(
+        0,
+        0,
+        0,
+        0
+    );
+
+    const date =
+        parseDate(dateString);
+
+    date.setHours(
+        0,
+        0,
+        0,
+        0
+    );
+
+    const difference =
+        Math.round(
+            (
+                date - today
+            )
+            /
+            (
+                1000 * 60 * 60 * 24
+            )
+        );
+
+    if (difference === 0) {
+        return "DANAS";
+    }
+
+    if (difference === 1) {
+        return "SUTRA";
+    }
+
+    if (difference === -1) {
+        return "JUČE";
+    }
+
+    return formatDayName(date);
+}
+
+
+/* =========================================================
+   UČITAVANJE JSON-a
+========================================================= */
+
+async function loadCalendar() {
+
+    try {
+
+        const response =
+            await fetch(
+                CALENDAR_URL + "?v=" + Date.now()
+            );
+
+        if (!response.ok) {
+
+            throw new Error(
+                "HTTP " + response.status
+            );
+
+        }
+
+        const data =
+            await response.json();
+
+
+        if (
+            !data ||
+            !data.calendar
+        ) {
+
+            throw new Error(
+                "JSON nema calendar podatke."
+            );
+
+        }
+
+
+        calendarData =
+            data.calendar;
+
+
+        availableDates =
+            Object.keys(
+                calendarData
+            ).sort();
+
+
+        if (
+            availableDates.length === 0
+        ) {
+
+            showError(
+                "Kalendar trenutno nema epizoda."
+            );
+
+            return;
+
+        }
+
+
+        createDayButtons();
+
+
+        /*
+         * Prvo pokušavamo da prikažemo
+         * današnji datum.
+         */
+
+        const today =
+            getTodayString();
+
+
+        if (
+            calendarData[today]
+        ) {
+
+            selectDate(today);
+
+        } else {
+
+            selectDate(
+                availableDates[0]
+            );
+
+        }
+
+    } catch (error) {
+
+        console.error(error);
+
+        showError(
+            "Greška pri učitavanju TV kalendara."
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   DAN BUTTONS
+========================================================= */
+
+function createDayButtons() {
+
+    daysElement.innerHTML = "";
+
+
+    availableDates.forEach(
+        (dateString) => {
+
+            const date =
+                parseDate(dateString);
+
+
+            const button =
+                document.createElement(
+                    "button"
+                );
+
+            button.className =
+                "day-button";
+
+            button.type =
+                "button";
+
+            button.dataset.date =
+                dateString;
+
+
+            const relative =
+                getRelativeDayLabel(
+                    dateString
+                );
+
+
+            button.innerHTML = `
+                <span class="day-name">
+                    ${relative}
+                </span>
+
+                <span class="day-date">
+                    ${formatShortDate(date)}
+                </span>
+            `;
+
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    selectDate(
+                        dateString
+                    );
+
+                }
+            );
+
+
+            daysElement.appendChild(
+                button
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   IZBOR DATUMA
+========================================================= */
+
+function selectDate(dateString) {
+
+    selectedDate =
+        dateString;
+
+
+    document
+        .querySelectorAll(
+            ".day-button"
+        )
+        .forEach(
+            button => {
+
+                button.classList.toggle(
+                    "active",
+                    button.dataset.date === dateString
+                );
+
+            }
+        );
+
+
+    /*
+     * Automatski pomeri
+     * aktivni dan u vidljivo područje.
+     */
+
+    const activeButton =
+        document.querySelector(
+            `.day-button[data-date="${dateString}"]`
+        );
+
+
+    if (activeButton) {
+
+        activeButton.scrollIntoView({
+            behavior: "smooth",
+            inline: "center",
+            block: "nearest"
+        });
+
+    }
+
+
+    renderDate(
+        dateString
+    );
+
+}
+
+
+/* =========================================================
+   GRUPISANJE SERIJA
+========================================================= */
+
+function groupBySeries(items) {
+
+    const groups = {};
+
+
+    items.forEach(
+        item => {
+
+            /*
+             * URL koristimo kao glavni identifikator
+             * serije.
+             */
+
+            const key =
+                item.url
+                ||
+                item.title;
+
+
+            if (!groups[key]) {
+
+                groups[key] = {
+
+                    title:
+                        item.title || "Nepoznata serija",
+
+                    url:
+                        item.url || "#",
+
+                    image:
+                        item.image || "",
+
+                    season:
+                        item.season,
+
+                    time:
+                        item.time || "",
+
+                    timezone:
+                        item.timezone || "",
+
+                    episodes: []
+
+                };
+
+            }
+
+
+            if (
+                item.episode !== null &&
+                item.episode !== undefined
+            ) {
+
+                groups[key]
+                    .episodes
+                    .push(
+                        item.episode
+                    );
+
+            }
+
+        }
+    );
+
+
+    return Object.values(
+        groups
+    );
+
+}
+
+
+/* =========================================================
+   PRIKAŽI DATUM
+========================================================= */
+
+function renderDate(dateString) {
+
+    const items =
+        calendarData[
+            dateString
+        ] || [];
+
+
+    const grouped =
+        groupBySeries(
+            items
+        );
+
+
+    const date =
+        parseDate(
+            dateString
+        );
+
+
+    const relative =
+        getRelativeDayLabel(
+            dateString
+        );
+
+
+    contentElement.className =
+        "";
+
+
+    contentElement.innerHTML = `
+        <div class="day-title">
+
+            <h2>
+                <span>${relative}</span>
+                · ${formatDayName(date)}
+                ${formatDate(date)}
+            </h2>
+
+            <div class="day-count">
+                ${grouped.length}
+                ${grouped.length === 1 ? "serija" : "serija"}
+            </div>
+
+        </div>
+
+        <div
+            id="seriesGrid"
+            class="series-grid"
+        ></div>
+    `;
+
+
+    const grid =
+        document.getElementById(
+            "seriesGrid"
+        );
+
+
+    if (
+        grouped.length === 0
+    ) {
+
+        grid.innerHTML = `
+            <div class="empty">
+                Nema najavljenih epizoda.
+            </div>
+        `;
+
+        return;
+
+    }
+
+
+    grouped.forEach(
+        series => {
+
+            grid.appendChild(
+                createSeriesCard(
+                    series
+                )
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   SERIJA CARD
+========================================================= */
+
+function createSeriesCard(series) {
+
+    const card =
+        document.createElement(
+            "article"
+        );
+
+
+    card.className =
+        "series-card";
+
+
+    card.tabIndex =
+        0;
+
+
+    /*
+     * Uklanjamo duplikate epizoda
+     */
+
+    const episodes =
+        [
+            ...new Set(
+                series.episodes
+            )
+        ].sort(
+            (a, b) => a - b
+        );
+
+
+    const episodeText =
+        episodes
+            .map(
+                episode =>
+                    `<span class="episode">
+                        Ep. ${episode}
+                    </span>`
+            )
+            .join("");
+
+
+    const newBadge = `
+        <div class="new-badge">
+            Nova epizoda
+        </div>
+    `;
+
+
+    const episodeBadge = `
+        <div class="episode-count">
+            ${episodes.length}
+            ${episodes.length === 1
+                ? "epizoda"
+                : "epizode"}
+        </div>
+    `;
+
+
+    const image =
+        series.image
+        ||
+        "";
+
+
+    card.innerHTML = `
+
+        <div class="poster-wrapper">
+
+            <img
+                class="poster"
+                src="${escapeHtml(image)}"
+                alt="${escapeHtml(series.title)}"
+                loading="lazy"
+                onerror="this.style.opacity='0.25'"
+            >
+
+            ${newBadge}
+
+            ${episodeBadge}
+
+        </div>
+
+
+        <div class="card-info">
+
+            <h3 class="series-title">
+                ${escapeHtml(series.title)}
+            </h3>
+
+
+            ${
+                series.season !== null &&
+                series.season !== undefined
+                ?
+                `
+                <div class="season">
+                    Sezona ${series.season}
+                </div>
+                `
+                :
+                ""
+            }
+
+
+            <div class="episodes">
+
+                ${episodeText}
+
+            </div>
+
+
+            ${
+                series.time
+                ?
+                `
+                <div class="time">
+
+                    🕐
+
+                    <strong>
+                        ${escapeHtml(series.time)}
+                    </strong>
+
+                    ${
+                        series.timezone
+                        ?
+                        `<span>
+                            (${escapeHtml(series.timezone)})
+                        </span>`
+                        :
+                        ""
+                    }
+
+                </div>
+                `
+                :
+                ""
+            }
+
+        </div>
+
+    `;
+
+
+    /*
+     * Klik na karticu
+     */
+
+    card.addEventListener(
+        "click",
+        () => {
+
+            if (
+                series.url &&
+                series.url !== "#"
+            ) {
+
+                window.location.href =
+                    series.url;
+
+            }
+
+        }
+    );
+
+
+    /*
+     * ENTER / OK na TV-u
+     */
+
+    card.addEventListener(
+        "keydown",
+        event => {
+
+            if (
+                event.key === "Enter" ||
+                event.key === " "
+            ) {
+
+                event.preventDefault();
+
+                if (
+                    series.url &&
+                    series.url !== "#"
+                ) {
+
+                    window.location.href =
+                        series.url;
+
+                }
+
+            }
+
+        }
+    );
+
+
+    return card;
+
+}
+
+
+/* =========================================================
+   ESCAPE HTML
+========================================================= */
+
+function escapeHtml(value) {
+
+    if (
+        value === null ||
+        value === undefined
+    ) {
+
+        return "";
+
+    }
+
+
+    return String(value)
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+}
+
+
+/* =========================================================
+   ERROR
+========================================================= */
+
+function showError(message) {
+
+    contentElement.className =
+        "error";
+
+    contentElement.innerHTML =
+        `
+            <strong>
+                Greška
+            </strong>
+
+            <br><br>
+
+            ${escapeHtml(message)}
+        `;
+
+}
+
+
+/* =========================================================
+   TV / D-PAD NAVIGACIJA
+========================================================= */
+
+document.addEventListener(
+    "keydown",
+    event => {
+
+        const key =
+            event.keyCode;
+
+
+        /*
+         * LEFT / RIGHT
+         * menjaju dan
+         */
+
+        if (
+            key === 37 ||
+            key === 39
+        ) {
+
+            const buttons =
+                [
+                    ...document.querySelectorAll(
+                        ".day-button"
+                    )
+                ];
+
+
+            const current =
+                buttons.findIndex(
+                    button =>
+                        button.dataset.date === selectedDate
+                );
+
+
+            if (current !== -1) {
+
+                let next =
+                    key === 39
+                    ? current + 1
+                    : current - 1;
+
+
+                if (next < 0) {
+                    next = 0;
+                }
+
+                if (
+                    next >= buttons.length
+                ) {
+
+                    next =
+                        buttons.length - 1;
+
+                }
+
+
+                buttons[next].focus();
+
+                selectDate(
+                    buttons[next].dataset.date
+                );
+
+            }
+
+
+            event.preventDefault();
+
+            return;
+
+        }
+
+
+        /*
+         * DOWN
+         * sa dana prelazimo
+         * na prvu seriju
+         */
+
+        if (
+            key === 40
+        ) {
+
+            const firstCard =
+                document.querySelector(
+                    ".series-card"
+                );
+
+
+            if (firstCard) {
+
+                firstCard.focus();
+
+                firstCard.scrollIntoView({
+                    behavior: "smooth",
+                    block: "center"
+                });
+
+            }
+
+
+            event.preventDefault();
+
+            return;
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   START
+========================================================= */
+
+loadCalendar();
+
+</script>
+
+</body>
+</html>
