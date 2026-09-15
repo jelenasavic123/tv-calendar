@@ -1,8 +1,9 @@
 import json
 import re
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 from pathlib import Path
 from urllib.parse import urljoin
+from zoneinfo import ZoneInfo
 
 import requests
 from bs4 import BeautifulSoup
@@ -17,6 +18,9 @@ SOURCE_URL = "https://turskeserije.tv/kalendar/"
 OUTPUT_FILE = "tv-calendar.json"
 
 TIMEOUT = 30
+
+# Srbija
+TIMEZONE = ZoneInfo("Europe/Belgrade")
 
 HEADERS = {
     "User-Agent": (
@@ -54,7 +58,7 @@ MONTHS = {
 
 
 # =========================================================
-# POMOĆNE FUNKCIJE
+# ČIŠĆENJE TEKSTA
 # =========================================================
 
 def clean_text(value):
@@ -68,81 +72,43 @@ def clean_text(value):
     ).strip()
 
 
+# =========================================================
+# APSOLUTNI URL
+# =========================================================
+
 def absolute_url(url):
+
     if not url:
         return ""
 
     return urljoin(
         SOURCE_URL,
-        url
+        url.strip()
     )
 
 
 # =========================================================
-# EPIZODA
+# PARSIRANJE DATUMA
 # =========================================================
 
-def parse_episode(text):
+def parse_calendar_date(text, year):
+
     """
-    Primer:
-
-    Epizoda 2, Sezone 1
-
-    vraća:
-
-    episode = 2
-    season = 1
-    """
-
-    text = clean_text(text)
-
-    episode = None
-    season = None
-
-    episode_match = re.search(
-        r"Epizoda\s*(\d+)",
-        text,
-        re.IGNORECASE
-    )
-
-    if episode_match:
-        episode = int(
-            episode_match.group(1)
-        )
-
-    season_match = re.search(
-        r"Sezone?\s*(\d+)",
-        text,
-        re.IGNORECASE
-    )
-
-    if season_match:
-        season = int(
-            season_match.group(1)
-        )
-
-    return episode, season
-
-
-# =========================================================
-# DATUM
-# =========================================================
-
-def parse_calendar_date(text, reference_year):
-    """
-    Primer:
+    Primeri:
 
     Monday, Sep 21
-
     Tuesday, Sep 15
+    Today (Tuesday, Sep 15)
+    Wednesday, Sep 16
     """
 
     text = clean_text(text)
 
     match = re.search(
-        r"(January|February|March|April|May|June|"
-        r"July|August|September|October|November|December)"
-        r"\s+(\d{1,2})",
+        r"\b("
+        r"January|February|March|April|May|June|"
+        r"July|August|September|October|November|December"
+        r")\s+(\d{1,2})\b",
         text,
         re.IGNORECASE
     )
@@ -150,10 +116,7 @@ def parse_calendar_date(text, reference_year):
     if not match:
         return None
 
-    month_name = (
-        match.group(1)
-        .lower()
-    )
+    month_name = match.group(1).lower()
 
     day = int(
         match.group(2)
@@ -169,7 +132,7 @@ def parse_calendar_date(text, reference_year):
     try:
 
         return datetime(
-            reference_year,
+            year,
             month,
             day
         ).date()
@@ -180,10 +143,60 @@ def parse_calendar_date(text, reference_year):
 
 
 # =========================================================
-# SLIKA
+# PARSIRANJE EPIZODE I SEZONE
+# =========================================================
+
+def parse_episode(text):
+
+    """
+    Primer:
+
+    Epizoda 118, Sezone 2
+
+    rezultat:
+
+    episode = 118
+    season = 2
+    """
+
+    text = clean_text(text)
+
+    episode = None
+    season = None
+
+    episode_match = re.search(
+        r"Epizoda\s*(\d+)",
+        text,
+        re.IGNORECASE
+    )
+
+    if episode_match:
+
+        episode = int(
+            episode_match.group(1)
+        )
+
+    season_match = re.search(
+        r"Sezone?\s*(\d+)",
+        text,
+        re.IGNORECASE
+    )
+
+    if season_match:
+
+        season = int(
+            season_match.group(1)
+        )
+
+    return episode, season
+
+
+# =========================================================
+# POSTER
 # =========================================================
 
 def get_image_url(img):
+
     if not img:
         return ""
 
@@ -197,19 +210,27 @@ def get_image_url(img):
     srcset = img.get("srcset")
 
     if srcset:
-        first = srcset.split(",")[0].strip()
 
-        if first:
-            parts = first.split()
+        parts = srcset.split(",")
 
-            if parts:
-                candidates.append(
-                    parts[0]
-                )
+        if parts:
+
+            first = parts[0].strip()
+
+            if first:
+
+                first_parts = first.split()
+
+                if first_parts:
+
+                    candidates.append(
+                        first_parts[0]
+                    )
 
     for value in candidates:
 
         if value:
+
             return absolute_url(
                 value
             )
@@ -218,7 +239,7 @@ def get_image_url(img):
 
 
 # =========================================================
-# NORMALIZACIJA URL-a
+# NORMALIZACIJA URL
 # =========================================================
 
 def normalize_url(url):
@@ -267,15 +288,23 @@ def normalize_title(title):
 def get_current_week():
 
     """
-    Vraća:
+    Nedelja je:
 
-    ponedeljak
-    nedelja
+    Ponedeljak -> Nedelja
 
-    Tekuće nedelje.
+    Primer:
+
+    2026-09-15
+    postaje:
+
+    2026-09-14 -> 2026-09-20
     """
 
-    today = datetime.now().date()
+    now = datetime.now(
+        TIMEZONE
+    )
+
+    today = now.date()
 
     monday = (
         today
@@ -286,7 +315,9 @@ def get_current_week():
 
     sunday = (
         monday
-        + timedelta(days=6)
+        + timedelta(
+            days=6
+        )
     )
 
     return monday, sunday
@@ -305,18 +336,154 @@ def get_week_dates(monday):
 
 
 # =========================================================
+# VREME
+# =========================================================
+
+def parse_time(text):
+
+    text = clean_text(
+        text
+    )
+
+    if not text:
+
+        return "", ""
+
+    time_value = ""
+
+    timezone_value = ""
+
+    # -----------------------------------------------------
+    # SAT
+    # -----------------------------------------------------
+
+    time_match = re.search(
+        r"\b(\d{1,2}:\d{2})\b",
+        text
+    )
+
+    if time_match:
+
+        time_value = (
+            time_match.group(1)
+        )
+
+    # -----------------------------------------------------
+    # TIMEZONE
+    # -----------------------------------------------------
+
+    timezone_match = re.search(
+        r"\(([^)]+)\)",
+        text
+    )
+
+    if timezone_match:
+
+        timezone_value = (
+            timezone_match.group(1)
+        )
+
+    return (
+        time_value,
+        timezone_value
+    )
+
+
+# =========================================================
+# PRONALAŽENJE DATUMA ZA EPIZODU
+# =========================================================
+
+def find_date_for_episode(
+    episode_box,
+    headers_with_dates
+):
+
+    """
+    Za svaki .primetime tražimo
+    najbliži prethodni kalendarski h2.
+
+    Ovo je bitno zato što stranica
+    ponavlja kalendarske blokove.
+    """
+
+    current_position = (
+        episode_box
+    )
+
+    while current_position:
+
+        previous = (
+            current_position.find_previous(
+                "h2"
+            )
+        )
+
+        if not previous:
+            return None
+
+        classes = previous.get(
+            "class",
+            []
+        )
+
+        # -------------------------------------------------
+        # PROVERA DA LI JE OVO KALENDARSKI H2
+        # -------------------------------------------------
+
+        is_calendar_header = (
+            "calendar-primary"
+            in classes
+        )
+
+        # Nekad je calendar-primary na
+        # roditeljskom elementu.
+        if not is_calendar_header:
+
+            parent = previous.parent
+
+            if parent:
+
+                parent_classes = parent.get(
+                    "class",
+                    []
+                )
+
+                is_calendar_header = (
+                    "calendar-primary"
+                    in parent_classes
+                )
+
+        if is_calendar_header:
+
+            date_text = clean_text(
+                previous.get_text(
+                    " ",
+                    strip=True
+                )
+            )
+
+            return date_text
+
+        current_position = previous
+
+    return None
+
+
+# =========================================================
 # GLAVNI SCRAPER
 # =========================================================
 
 def scrape_calendar():
 
-    print("=" * 60)
-    print("TV KALENDAR")
-    print("=" * 60)
+    print()
+    print("=" * 70)
+    print("TURSKA SERIJA TV - NEDELJNI KALENDAR")
+    print("=" * 70)
+    print()
 
-    # -----------------------------------------------------
+    # =====================================================
     # TEKUĆA NEDELJA
-    # -----------------------------------------------------
+    # =====================================================
 
     monday, sunday = get_current_week()
 
@@ -330,26 +497,33 @@ def scrape_calendar():
     )
 
     allowed_dates = {
-        d.isoformat()
-        for d in week_dates
+        date.isoformat()
+        for date in week_dates
     }
 
-    # -----------------------------------------------------
+    # =====================================================
     # PRAZAN KALENDAR
-    # -----------------------------------------------------
+    # =====================================================
 
     calendar = {
-        d.isoformat(): []
-        for d in week_dates
+        date.isoformat(): []
+        for date in week_dates
     }
 
-    # -----------------------------------------------------
-    # HTTP
-    # -----------------------------------------------------
+    # =====================================================
+    # UČITAVANJE STRANICE
+    # =====================================================
+
+    print()
+    print(
+        f"Učitavam:"
+    )
 
     print(
-        f"Učitavam: {SOURCE_URL}"
+        SOURCE_URL
     )
+
+    print()
 
     response = requests.get(
         SOURCE_URL,
@@ -360,39 +534,66 @@ def scrape_calendar():
     response.raise_for_status()
 
     print(
-        f"HTTP: {response.status_code}"
+        f"HTTP status: "
+        f"{response.status_code}"
     )
 
-    # -----------------------------------------------------
-    # PARSIRANJE
-    # -----------------------------------------------------
+    print(
+        f"Veličina stranice: "
+        f"{len(response.text):,} karaktera"
+    )
+
+    # =====================================================
+    # BEAUTIFULSOUP
+    # =====================================================
 
     soup = BeautifulSoup(
         response.text,
         "html.parser"
     )
 
-    # -----------------------------------------------------
+    # =====================================================
     # GODINA
-    # -----------------------------------------------------
+    # =====================================================
 
-    current_year = datetime.now().year
+    now = datetime.now(
+        TIMEZONE
+    )
 
-    # -----------------------------------------------------
-    # SVI SWIPER BLOKOVI
-    # -----------------------------------------------------
+    current_year = now.year
 
-    slides = soup.select(
-        ".swiper-slide"
+    # =====================================================
+    # PRONAĐI SVE DATUMSKE HEADER-E
+    # =====================================================
+
+    date_headers = soup.select(
+        ".calendar-primary h2"
+    )
+
+    print()
+    print(
+        f"Pronađeno datumskih zaglavlja: "
+        f"{len(date_headers)}"
+    )
+
+    # =====================================================
+    # PRONAĐI SVE EPIZODE
+    # =====================================================
+
+    episode_boxes = soup.select(
+        ".primetime"
     )
 
     print(
-        f"Pronađeno blokova: {len(slides)}"
+        f"Pronađeno .primetime elemenata: "
+        f"{len(episode_boxes)}"
     )
 
-    # -----------------------------------------------------
+    print()
+
+    # =====================================================
     # STATISTIKA
-    # -----------------------------------------------------
+    # =====================================================
 
     found = 0
 
@@ -404,25 +605,35 @@ def scrape_calendar():
 
     invalid_date = 0
 
-    # -----------------------------------------------------
-    # PROLAZ KROZ BLOKOVE
-    # -----------------------------------------------------
+    duplicate_count = 0
 
-    for slide in slides:
+    # =====================================================
+    # EPIZODE
+    # =====================================================
 
-        date_element = slide.select_one(
-            ".calendar-primary h2"
+    for episode_box in episode_boxes:
+
+        found += 1
+
+        # -------------------------------------------------
+        # DATUM
+        # -------------------------------------------------
+
+        date_text = find_date_for_episode(
+            episode_box,
+            date_headers
         )
 
-        if not date_element:
-            continue
+        if not date_text:
 
-        date_text = clean_text(
-            date_element.get_text(
-                " ",
-                strip=True
+            invalid_date += 1
+
+            print(
+                "[DATUM ERROR] "
+                "Nije pronađen datum za epizodu."
             )
-        )
+
+            continue
 
         parsed_date = parse_calendar_date(
             date_text,
@@ -434,12 +645,15 @@ def scrape_calendar():
             invalid_date += 1
 
             print(
-                f"[DATUM ERROR] {date_text}"
+                f"[DATUM ERROR] "
+                f"{date_text}"
             )
 
             continue
 
-        date_key = parsed_date.isoformat()
+        date_key = (
+            parsed_date.isoformat()
+        )
 
         # -------------------------------------------------
         # SAMO TEKUĆA NEDELJA
@@ -452,184 +666,156 @@ def scrape_calendar():
             continue
 
         # -------------------------------------------------
-        # EPIZODE
+        # LINK
         # -------------------------------------------------
 
-        episode_elements = slide.select(
-            ".primetime"
+        link = episode_box.select_one(
+            "a"
         )
 
-        for episode_box in episode_elements:
+        if not link:
 
-            found += 1
+            skipped += 1
 
-            # ---------------------------------------------
-            # LINK
-            # ---------------------------------------------
+            continue
 
-            link = episode_box.select_one(
-                "a"
+        url = absolute_url(
+            link.get(
+                "href",
+                ""
             )
+        )
 
-            if not link:
+        # -------------------------------------------------
+        # POSTER
+        # -------------------------------------------------
 
-                skipped += 1
+        img = episode_box.select_one(
+            "img"
+        )
 
-                continue
+        image = get_image_url(
+            img
+        )
 
-            url = absolute_url(
-                link.get("href", "")
-            )
+        # -------------------------------------------------
+        # NASLOV
+        # -------------------------------------------------
 
-            # ---------------------------------------------
-            # POSTER
-            # ---------------------------------------------
-
-            img = episode_box.select_one(
-                "img"
-            )
-
-            image = get_image_url(
-                img
-            )
-
-            # ---------------------------------------------
-            # NASLOV
-            # ---------------------------------------------
-
-            title_element = episode_box.select_one(
+        title_element = (
+            episode_box.select_one(
                 "h3"
             )
+        )
+
+        if title_element:
 
             title = clean_text(
                 title_element.get_text(
                     " ",
                     strip=True
                 )
-                if title_element
-                else ""
             )
 
-            # ---------------------------------------------
-            # EPIZODA / SEZONA
-            # ---------------------------------------------
+        else:
 
-            episode_element = episode_box.select_one(
+            title = ""
+
+        # -------------------------------------------------
+        # EPIZODA / SEZONA
+        # -------------------------------------------------
+
+        episode_element = (
+            episode_box.select_one(
                 "span.cl-text-primary"
             )
+        )
+
+        if episode_element:
 
             episode_text = clean_text(
                 episode_element.get_text(
                     " ",
                     strip=True
                 )
-                if episode_element
-                else ""
             )
 
-            episode, season = parse_episode(
-                episode_text
-            )
+        else:
 
-            # ---------------------------------------------
-            # VREME
-            # ---------------------------------------------
+            episode_text = ""
 
-            time_element = episode_box.select_one(
+        episode, season = parse_episode(
+            episode_text
+        )
+
+        # -------------------------------------------------
+        # VREME
+        # -------------------------------------------------
+
+        time_element = (
+            episode_box.select_one(
                 "span.cl-mb-0"
             )
+        )
+
+        if time_element:
 
             time_text = clean_text(
                 time_element.get_text(
                     " ",
                     strip=True
                 )
-                if time_element
-                else ""
             )
 
-            time_value = ""
+        else:
 
-            timezone_value = ""
+            time_text = ""
 
-            if time_text:
+        (
+            time_value,
+            timezone_value
+        ) = parse_time(
+            time_text
+        )
 
-                time_match = re.search(
-                    r"(\d{1,2}:\d{2})",
-                    time_text
-                )
+        # -------------------------------------------------
+        # NASLOV OBAVEZAN
+        # -------------------------------------------------
 
-                if time_match:
+        if not title:
 
-                    time_value = (
-                        time_match.group(1)
-                    )
+            skipped += 1
 
-                timezone_match = re.search(
-                    r"\(([^)]+)\)",
-                    time_text
-                )
+            continue
 
-                if timezone_match:
+        # -------------------------------------------------
+        # ITEM
+        # -------------------------------------------------
 
-                    timezone_value = (
-                        timezone_match.group(1)
-                    )
+        item = {
+            "date": date_key,
+            "title": title,
+            "url": url,
+            "image": image,
+            "episode": episode,
+            "season": season,
+            "time": time_value,
+            "timezone": timezone_value
+        }
 
-            # ---------------------------------------------
-            # PROVERA
-            # ---------------------------------------------
+        # -------------------------------------------------
+        # DODAVANJE
+        # -------------------------------------------------
 
-            if not title:
+        calendar[date_key].append(
+            item
+        )
 
-                skipped += 1
-
-                continue
-
-            # ---------------------------------------------
-            # ITEM
-            # ---------------------------------------------
-
-            item = {
-                "date": date_key,
-                "title": title,
-                "url": url,
-                "image": image,
-                "episode": episode,
-                "season": season,
-                "time": time_value,
-                "timezone": timezone_value,
-            }
-
-            calendar[date_key].append(
-                item
-            )
-
-            added += 1
+        added += 1
 
     # =====================================================
     # UKLANJANJE DUPLIKATA
     # =====================================================
-
-    """
-    Na source stranici isti blok može biti ponovljen.
-
-    Na primer:
-
-    Haysiyet epizoda 1
-    Haysiyet epizoda 2
-    Haysiyet epizoda 3
-
-    To NIJE duplikat.
-
-    Ali ako se potpuno isti zapis pojavi dva puta:
-
-    Haysiyet + datum + epizoda 1
-
-    onda ga uklanjamo.
-    """
-
-    duplicate_count = 0
 
     for date_key in calendar:
 
@@ -679,19 +865,25 @@ def scrape_calendar():
 
         calendar[date_key].sort(
             key=lambda item: (
-                item.get("time") or "99:99",
-                item.get("title") or "",
+                item.get("time")
+                or "99:99",
+
+                normalize_title(
+                    item.get("title")
+                ),
+
                 item.get("season")
                 if item.get("season") is not None
                 else 999,
+
                 item.get("episode")
                 if item.get("episode") is not None
-                else 999,
+                else 999
             )
         )
 
     # =====================================================
-    # UKUPAN BROJ
+    # STATISTIKA
     # =====================================================
 
     total_items = sum(
@@ -709,12 +901,8 @@ def scrape_calendar():
     # VREME AŽURIRANJA
     # =====================================================
 
-    serbia_timezone = timezone(
-        timedelta(hours=2)
-    )
-
     updated_at = datetime.now(
-        serbia_timezone
+        TIMEZONE
     ).isoformat()
 
     # =====================================================
@@ -744,11 +932,10 @@ def scrape_calendar():
 
         "calendar":
             calendar
-
     }
 
     # =====================================================
-    # UPIS
+    # UPIS JSON-A
     # =====================================================
 
     output_path = Path(
@@ -765,57 +952,68 @@ def scrape_calendar():
     )
 
     # =====================================================
-    # STATISTIKA
+    # ISPIS REZULTATA
     # =====================================================
 
     print()
-    print("=" * 60)
-    print("ZAVRŠENO")
-    print("=" * 60)
+    print("=" * 70)
+    print("REZULTAT")
+    print("=" * 70)
+    print()
 
     print(
-        f"Nedelja: "
+        f"Nedelja:"
+    )
+
+    print(
         f"{monday} -> {sunday}"
     )
 
+    print()
+
     print(
-        f"Dana sa epizodama: "
-        f"{total_days}/7"
+        f"Pronađeno .primetime:"
+        f" {found}"
     )
 
     print(
-        f"Pronađeno epizoda: "
-        f"{found}"
+        f"Upisano:"
+        f" {total_items}"
     )
 
     print(
-        f"Upisano epizoda: "
-        f"{total_items}"
+        f"Preskočeno:"
+        f" {skipped}"
     )
 
     print(
-        f"Preskočeno: "
-        f"{skipped}"
+        f"Van tekuće nedelje:"
+        f" {outside_week}"
     )
 
     print(
-        f"Van nedelje: "
-        f"{outside_week}"
+        f"Neispravnih datuma:"
+        f" {invalid_date}"
     )
 
     print(
-        f"Duplikata uklonjeno: "
-        f"{duplicate_count}"
+        f"Duplikata uklonjeno:"
+        f" {duplicate_count}"
     )
 
     print(
-        f"Neispravnih datuma: "
-        f"{invalid_date}"
+        f"Dana sa epizodama:"
+        f" {total_days}/7"
     )
 
+    print()
+
+    # =====================================================
+    # ISPIS PO DANIMA
+    # =====================================================
+
     print(
-        f"JSON: "
-        f"{output_path.resolve()}"
+        "EPIZODE PO DANIMA:"
     )
 
     print()
@@ -827,8 +1025,49 @@ def scrape_calendar():
             f"{len(items)} epizoda"
         )
 
+        for item in items:
+
+            episode_text = ""
+
+            if item.get("episode") is not None:
+
+                episode_text = (
+                    f"Epizoda "
+                    f"{item.get('episode')}"
+                )
+
+            if item.get("season") is not None:
+
+                episode_text += (
+                    f" | Sezona "
+                    f"{item.get('season')}"
+                )
+
+            print(
+                f"    - "
+                f"{item.get('title')} "
+                f"{episode_text} "
+                f"{item.get('time')}"
+            )
+
     print()
-    print("=" * 60)
+
+    print(
+        f"JSON napravljen:"
+    )
+
+    print(
+        str(
+            output_path.resolve()
+        )
+    )
+
+    print()
+
+    print("=" * 70)
+    print("GOTOVO")
+    print("=" * 70)
+    print()
 
 
 # =========================================================
@@ -844,21 +1083,23 @@ if __name__ == "__main__":
     except requests.RequestException as error:
 
         print()
-        print(
-            "HTTP GREŠKA:"
-        )
-
+        print("=" * 70)
+        print("HTTP GREŠKA")
+        print("=" * 70)
+        print()
         print(error)
+        print()
 
         raise
 
     except Exception as error:
 
         print()
-        print(
-            "GREŠKA:"
-        )
-
+        print("=" * 70)
+        print("GREŠKA")
+        print("=" * 70)
+        print()
         print(error)
+        print()
 
         raise
