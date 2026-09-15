@@ -1,0 +1,452 @@
+{
+  "updatedAt": "2026-09-15T11:58:21.352607+02:00",
+  "source": "https://turskeserije.tv/kalendar/",
+  "calendar": {
+    "2026-09-15": [
+      {
+        "title": "Haysiyet (Dostojanstvo)",
+        "url": "https://turskeserije.tv/haysiyet/",
+        "image": "https://turskeserije.tv/wp-content/uploads/2026/09/haysiyet-sa-prevodom.jpg",
+        "episode": 1,
+        "season": 1,
+        "time": "23:59",
+        "timezone": "GMT +1"
+      },
+      {
+        "title": "Tuzlu Kahve (Slana Kafa)",
+        "url": "https://turskeserije.tv/tuzlu-kahve/",
+        "image": "https://turskeserije.tv/wp-content/uploads/2026/09/slana-kafa-sa-prevodom.jpg",
+        "episode": 2,
+        "season": 1,
+        "time": "23:59",
+        "timezone": "GMT +1"
+      },
+      {
+        "title": "Haysiyet (Dostojanstvo)",
+        "url": "https://turskeserije.tv/haysiyet/",
+        "image": "https://turskeserije.tv/wp-content/uploads/2026/09/haysiyet-sa-prevodom.jpg",
+        "episode": 2,
+        "season": 1,
+        "time": "23:59",
+        "timezone": "GMT +1"
+      },
+      {
+        "title": "Tuzlu Kahve (Slana Kafa)",
+        "url": "https://turskeserije.tv/tuzlu-kahve/",
+        "image": "https://turskeserije.tv/wp-content/uploads/2026/09/slana-kafa-sa-prevodom.jpg",
+        "episode": 3,
+        "season": 1,
+        "time": "23:59",
+        "timezone": "GMT +1"
+      },
+      {
+        "title": "Haysiyet (Dostojanstvo)",
+        "url": "https://turskeserije.tv/haysiyet/",
+        "image": "https://turskeserije.tv/wp-content/uploads/2026/09/haysiyet-sa-prevodom.jpg",
+        "episode": 3,
+        "season": 1,
+        "time": "23:59",
+        "timezone": "GMT +1"
+      },
+      {
+        "title": "Tuzlu Kahve (Slana Kafa)",
+        "url": "https://turskeserije.tv/tuzlu-kahve/",
+        "image": "https://turskeserije.tv/wp-content/uploads/2026/09/slana-kafa-sa-prevodom.jpg",
+        "episode": 4,
+        "season": 1,
+        "time": "23:59",
+        "timezone": "GMT +1"
+      },
+      {
+        "title": "ABI (Porodica Je Iskusenje)",
+        "url": "https://turskeserije.tv/abi/",
+        "image": "https://turskeserije.tv/wp-content/uploads/2026/01/abi-sa-prevodom.jpg",
+        "episode": 19,
+        "season": 2,
+        "time": "23:59",
+        "timezone": "GMT +1"
+      },
+      {
+        "title": "ABI (Porodica Je Iskusenje)",
+        "url": "https://turskeserije.tv/abi/",
+        "image": "https://turskeserije.tv/wp-content/uploads/2026/01/abi-sa-prevodom.jpg",
+        "episode": 20,
+        "season": 2,
+        "time": "23:59",
+        "timezone": "GMT +1"
+      },
+      {
+        "title": "ABI (Porodica Je Iskusenje)",
+        "url": "https://turskeserije.tv/abi/",
+        "image": "https://turskeserije.tv/wp-content/uploads/2026/01/abi-sa-prevodom.jpg",
+        "episode": 21,
+        "season": 2,
+        "time": "23:59",
+        "timezone": "GMT +1"
+      }
+    ],
+    "2026-09-16": [
+      {
+        "title": "Ask ve Taht (Ljubav i Presto)",
+        "url": "https://turskeserije.tv/ask-ve-taht/",
+        "image": "https://turskeserije.tv/wp-content/uploads/2026/09/ask-ve-taht-sa-prevodom.jpg",
+        "episode": 1,
+        "season": 1,
+        "time": "23:59",
+        "timezone": "GMT +1"
+      },
+      {
+        "title": "Sevdan Bir Ates (Vatra Ljubavi)",
+        "url": "https://turskeserije.tv/sevdan-bir-ates/",
+        "image": "https://turskeserije.tv/wp-content/uploads/2026/09/sevdan-bir-ates-sa-prevodom.jpg",
+        "episode": 1,
+        "season": 1,
+        "time": "23:59",
+        "timezone": "GMT +1"
+      },
+      {
+        "title": "Ask ve Taht (Ljubav i Presto)",
+        "url": "https://turskeserije.tv/ask-ve-taht/",
+        "image": "https://turskeserije.tv/wp-content/uploads/2026/09/ask-ve-taht-sa-prevodom.jpg",
+        "episode": 2,
+        "season": 1,
+        "time": "23:59",
+        "timezone": "GMT +1"
+      },
+      {
+        "title": "Sevdan Bir Ates (Vatra Ljubavi)",
+        "url": "https://turskeserije.tv/sevdan-bir-ates/",
+        "image": "https://turskeserije.tv/wp-content/uploads/2026/09/sevdan-bir-ates-sa-prevodom.jpg",
+        "episode": 2,
+        "season": 1,
+        "time": "23:59",
+        "timezone": "GMT +1"
+      },
+      {
+        "title": "Ask ve Taht (Ljubav i Presto)",
+        "url": "https://turskeserije.tv/ask-ve-taht/",
+        "image": "https://turskeserije.tv/wp-content/uploads/2026/09/ask-ve-taht-sa-prevodom.jpg",
+        "episode": 3,
+        "season": 1,
+        "time": "23:59",
+        "timezone": "GMT +1"
+      },
+      {
+        "title": "Sevdan Bir Ates (Vatra Ljubavi)",
+        "url": "https://turskeserije.tv/sevdan-bir-ates/",
+        "image": "https://turskeserije.tv/wp-content/uploads/2026/09/sevdan-bir-ates-sa-prevodom.jpg",
+        "episode": 3,
+        "season": 1,
+        "time": "23:59",
+        "timezone": "GMT +1"
+      }
+    ],
+    "2026-09-17": [
+      {
+        "title": "Muhtemel Ask (Moguca Ljubav)",
+        "url": "https://turskeserije.tv/muhtemel-ask/",
+        "image": "https://turskeserije.tv/wp-content/uploads/2026/06/muhtemel-ask-sa-prevodom.jpg",
+        "episode": 13,
+        "season": 1,
+        "time": "23:59",
+        "timezone": "GMT +1"
+      },
+      {
+        "title": "Muhtemel Ask (Moguca Ljubav)",
+        "url": "https://turskeserije.tv/muhtemel-ask/",
+        "image": "https://turskeserije.tv/wp-content/uploads/2026/06/muhtemel-ask-sa-prevodom.jpg",
+        "episode": 14,
+        "season": 1,
+        "time": "23:59",
+        "timezone": "GMT +1"
+      },
+      {
+        "title": "Muhtemel Ask (Moguca Ljubav)",
+        "url": "https://turskeserije.tv/muhtemel-ask/",
+        "image": "https://turskeserije.tv/wp-content/uploads/2026/06/muhtemel-ask-sa-prevodom.jpg",
+        "episode": 15,
+        "season": 1,
+        "time": "23:59",
+        "timezone": "GMT +1"
+      },
+      {
+        "title": "Sevdigim Sensin (Ti Si Ona Koju Volim)",
+        "url": "https://turskeserije.tv/sevdigim-sensin/",
+        "image": "https://turskeserije.tv/wp-content/uploads/2026/02/sevdigim-sensin-sa-prevodom.jpg",
+        "episode": 16,
+        "season": 2,
+        "time": "23:59",
+        "timezone": "GMT +1"
+      },
+      {
+        "title": "Sevdigim Sensin (Ti Si Ona Koju Volim)",
+        "url": "https://turskeserije.tv/sevdigim-sensin/",
+        "image": "https://turskeserije.tv/wp-content/uploads/2026/02/sevdigim-sensin-sa-prevodom.jpg",
+        "episode": 17,
+        "season": 2,
+        "time": "23:59",
+        "timezone": "GMT +1"
+      },
+      {
+        "title": "Sevdigim Sensin (Ti Si Ona Koju Volim)",
+        "url": "https://turskeserije.tv/sevdigim-sensin/",
+        "image": "https://turskeserije.tv/wp-content/uploads/2026/02/sevdigim-sensin-sa-prevodom.jpg",
+        "episode": 18,
+        "season": 2,
+        "time": "23:59",
+        "timezone": "GMT +1"
+      }
+    ],
+    "2026-09-18": [
+      {
+        "title": "Arafta (Sudbinom Povezani)",
+        "url": "https://turskeserije.tv/arafta/",
+        "image": "https://turskeserije.tv/wp-content/uploads/2025/11/arafta-sa-prevodom.jpg",
+        "episode": 118,
+        "season": 2,
+        "time": "23:59",
+        "timezone": "GMT +1"
+      },
+      {
+        "title": "Arafta (Sudbinom Povezani)",
+        "url": "https://turskeserije.tv/arafta/",
+        "image": "https://turskeserije.tv/wp-content/uploads/2025/11/arafta-sa-prevodom.jpg",
+        "episode": 119,
+        "season": 2,
+        "time": "23:59",
+        "timezone": "GMT +1"
+      },
+      {
+        "title": "Arafta (Sudbinom Povezani)",
+        "url": "https://turskeserije.tv/arafta/",
+        "image": "https://turskeserije.tv/wp-content/uploads/2025/11/arafta-sa-prevodom.jpg",
+        "episode": 120,
+        "season": 2,
+        "time": "23:59",
+        "timezone": "GMT +1"
+      }
+    ],
+    "2026-09-19": [
+      {
+        "title": "Mercan Kosk (Koralna Palata)",
+        "url": "https://turskeserije.tv/mercan-kosk/",
+        "image": "https://turskeserije.tv/wp-content/uploads/2026/09/mercan-kosk-sa-prevodom.jpg",
+        "episode": 2,
+        "season": 1,
+        "time": "23:59",
+        "timezone": "GMT +1"
+      },
+      {
+        "title": "Mercan Kosk (Koralna Palata)",
+        "url": "https://turskeserije.tv/mercan-kosk/",
+        "image": "https://turskeserije.tv/wp-content/uploads/2026/09/mercan-kosk-sa-prevodom.jpg",
+        "episode": 3,
+        "season": 1,
+        "time": "23:59",
+        "timezone": "GMT +1"
+      },
+      {
+        "title": "Mercan Kosk (Koralna Palata)",
+        "url": "https://turskeserije.tv/mercan-kosk/",
+        "image": "https://turskeserije.tv/wp-content/uploads/2026/09/mercan-kosk-sa-prevodom.jpg",
+        "episode": 4,
+        "season": 1,
+        "time": "23:59",
+        "timezone": "GMT +1"
+      },
+      {
+        "title": "Guller ve Gunahlar (Ruze i Grehovi)",
+        "url": "https://turskeserije.tv/guller-ve-gunahlar/",
+        "image": "https://turskeserije.tv/wp-content/uploads/2025/10/guller-ve-gunahlar-sa-prevodom.jpg",
+        "episode": 33,
+        "season": 2,
+        "time": "23:59",
+        "timezone": "GMT +1"
+      },
+      {
+        "title": "Guller ve Gunahlar (Ruze i Grehovi)",
+        "url": "https://turskeserije.tv/guller-ve-gunahlar/",
+        "image": "https://turskeserije.tv/wp-content/uploads/2025/10/guller-ve-gunahlar-sa-prevodom.jpg",
+        "episode": 34,
+        "season": 2,
+        "time": "23:59",
+        "timezone": "GMT +1"
+      },
+      {
+        "title": "Guller ve Gunahlar (Ruze i Grehovi)",
+        "url": "https://turskeserije.tv/guller-ve-gunahlar/",
+        "image": "https://turskeserije.tv/wp-content/uploads/2025/10/guller-ve-gunahlar-sa-prevodom.jpg",
+        "episode": 35,
+        "season": 2,
+        "time": "23:59",
+        "timezone": "GMT +1"
+      },
+      {
+        "title": "Gonul Dagi (Planina Srca)",
+        "url": "https://turskeserije.tv/gonul-dagi/",
+        "image": "https://turskeserije.tv/wp-content/uploads/2025/06/gonul-dagi-sa-prevodom.jpg",
+        "episode": 222,
+        "season": 6,
+        "time": "23:59",
+        "timezone": "GMT +1"
+      },
+      {
+        "title": "Gonul Dagi (Planina Srca)",
+        "url": "https://turskeserije.tv/gonul-dagi/",
+        "image": "https://turskeserije.tv/wp-content/uploads/2025/06/gonul-dagi-sa-prevodom.jpg",
+        "episode": 223,
+        "season": 6,
+        "time": "23:59",
+        "timezone": "GMT +1"
+      },
+      {
+        "title": "Gonul Dagi (Planina Srca)",
+        "url": "https://turskeserije.tv/gonul-dagi/",
+        "image": "https://turskeserije.tv/wp-content/uploads/2025/06/gonul-dagi-sa-prevodom.jpg",
+        "episode": 224,
+        "season": 6,
+        "time": "23:59",
+        "timezone": "GMT +1"
+      }
+    ],
+    "2026-09-20": [
+      {
+        "title": "Daha On Yedi (Samo 17)",
+        "url": "https://turskeserije.tv/daha-on-yedi/",
+        "image": "https://turskeserije.tv/wp-content/uploads/2026/05/daha-on-yedi-sa-prevodom.jpg",
+        "episode": 16,
+        "season": 1,
+        "time": "23:59",
+        "timezone": "GMT +1"
+      },
+      {
+        "title": "Daha On Yedi (Samo 17)",
+        "url": "https://turskeserije.tv/daha-on-yedi/",
+        "image": "https://turskeserije.tv/wp-content/uploads/2026/05/daha-on-yedi-sa-prevodom.jpg",
+        "episode": 17,
+        "season": 1,
+        "time": "23:59",
+        "timezone": "GMT +1"
+      },
+      {
+        "title": "Daha On Yedi (Samo 17)",
+        "url": "https://turskeserije.tv/daha-on-yedi/",
+        "image": "https://turskeserije.tv/wp-content/uploads/2026/05/daha-on-yedi-sa-prevodom.jpg",
+        "episode": 18,
+        "season": 1,
+        "time": "23:59",
+        "timezone": "GMT +1"
+      }
+    ],
+    "2026-09-21": [
+      {
+        "title": "Evlilik Guzeldir (Brak Je Predivan)",
+        "url": "https://turskeserije.tv/evlilik-guzeldir/",
+        "image": "https://turskeserije.tv/wp-content/uploads/2026/09/evlilik-guzeldir-sa-prevodom.jpg",
+        "episode": 2,
+        "season": 1,
+        "time": "12:59",
+        "timezone": "GMT +1"
+      },
+      {
+        "title": "Evlilik Guzeldir (Brak Je Predivan)",
+        "url": "https://turskeserije.tv/evlilik-guzeldir/",
+        "image": "https://turskeserije.tv/wp-content/uploads/2026/09/evlilik-guzeldir-sa-prevodom.jpg",
+        "episode": 3,
+        "season": 1,
+        "time": "12:59",
+        "timezone": "GMT +1"
+      },
+      {
+        "title": "Evlilik Guzeldir (Brak Je Predivan)",
+        "url": "https://turskeserije.tv/evlilik-guzeldir/",
+        "image": "https://turskeserije.tv/wp-content/uploads/2026/09/evlilik-guzeldir-sa-prevodom.jpg",
+        "episode": 4,
+        "season": 1,
+        "time": "12:59",
+        "timezone": "GMT +1"
+      },
+      {
+        "title": "Alti Ustu Istanbul (Iznad i ispod Istanbula)",
+        "url": "https://turskeserije.tv/alti-ustu-istanbul/",
+        "image": "https://turskeserije.tv/wp-content/uploads/2026/06/alti-ustu-istanbul-sa-prevodom.jpg",
+        "episode": 14,
+        "season": 1,
+        "time": "23:59",
+        "timezone": "GMT +1"
+      },
+      {
+        "title": "Alti Ustu Istanbul (Iznad i ispod Istanbula)",
+        "url": "https://turskeserije.tv/alti-ustu-istanbul/",
+        "image": "https://turskeserije.tv/wp-content/uploads/2026/06/alti-ustu-istanbul-sa-prevodom.jpg",
+        "episode": 15,
+        "season": 1,
+        "time": "23:59",
+        "timezone": "GMT +1"
+      },
+      {
+        "title": "Alti Ustu Istanbul (Iznad i ispod Istanbula)",
+        "url": "https://turskeserije.tv/alti-ustu-istanbul/",
+        "image": "https://turskeserije.tv/wp-content/uploads/2026/06/alti-ustu-istanbul-sa-prevodom.jpg",
+        "episode": 16,
+        "season": 1,
+        "time": "23:59",
+        "timezone": "GMT +1"
+      },
+      {
+        "title": "Arafta (Sudbinom Povezani)",
+        "url": "https://turskeserije.tv/arafta/",
+        "image": "https://turskeserije.tv/wp-content/uploads/2025/11/arafta-sa-prevodom.jpg",
+        "episode": 118,
+        "season": 2,
+        "time": "23:59",
+        "timezone": "GMT +1"
+      },
+      {
+        "title": "Arafta (Sudbinom Povezani)",
+        "url": "https://turskeserije.tv/arafta/",
+        "image": "https://turskeserije.tv/wp-content/uploads/2025/11/arafta-sa-prevodom.jpg",
+        "episode": 119,
+        "season": 2,
+        "time": "23:59",
+        "timezone": "GMT +1"
+      },
+      {
+        "title": "Arafta (Sudbinom Povezani)",
+        "url": "https://turskeserije.tv/arafta/",
+        "image": "https://turskeserije.tv/wp-content/uploads/2025/11/arafta-sa-prevodom.jpg",
+        "episode": 120,
+        "season": 2,
+        "time": "23:59",
+        "timezone": "GMT +1"
+      },
+      {
+        "title": "Uzak Sehir (Daleki Grad)",
+        "url": "https://turskeserije.tv/uzak-sehir/",
+        "image": "https://turskeserije.tv/wp-content/uploads/2024/11/uzak-sehir-sa-prevodom.jpg",
+        "episode": 64,
+        "season": 3,
+        "time": "23:59",
+        "timezone": "GMT +1"
+      },
+      {
+        "title": "Uzak Sehir (Daleki Grad)",
+        "url": "https://turskeserije.tv/uzak-sehir/",
+        "image": "https://turskeserije.tv/wp-content/uploads/2024/11/uzak-sehir-sa-prevodom.jpg",
+        "episode": 65,
+        "season": 3,
+        "time": "23:59",
+        "timezone": "GMT +1"
+      },
+      {
+        "title": "Uzak Sehir (Daleki Grad)",
+        "url": "https://turskeserije.tv/uzak-sehir/",
+        "image": "https://turskeserije.tv/wp-content/uploads/2024/11/uzak-sehir-sa-prevodom.jpg",
+        "episode": 66,
+        "season": 3,
+        "time": "23:59",
+        "timezone": "GMT +1"
+      }
+    ]
+  }
+}
